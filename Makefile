@@ -17,11 +17,12 @@ ifeq "$(OS)" "macosx"
 
 EXE_SUFFIX=
 
-ARCHS=   -arch i386 -arch x86_64
-CFLAGS+= $(ARCHS)
+#ARCHS=    -arch x86_64
+CFLAGS+= $(ARCHS) #-DSERIALPORTDEBUG
 CFLAGS += -mmacosx-version-min=10.6
 CFLAGS_MONGOOSE=  -I./mongoose -pthread -g 
 LIBS+=	 $(ARCHS)
+CC=g++
 
 endif
 
@@ -37,16 +38,21 @@ endif
 
 #################  Common  ##################################################
 
-CFLAGS += $(INCLUDES) -O -Wall -std=gnu99
+CFLAGS += $(INCLUDES) -O -Wall 
 
 
-all: arduino-serial 
+all: arduino-serial linux-serial
 
 arduino-serial: arduino-serial.o arduino-serial-lib.o
 	$(CC) $(CFLAGS) -o arduino-serial$(EXE_SUFFIX) arduino-serial.o arduino-serial-lib.o $(LIBS)
 
+linux-serial: linux-serial.o arduino-serial-lib.o linux-serial.h linux-serial.c
+	$(CC) $(CFLAGS) -o linux-serial$(EXE_SUFFIX) linux-serial.o arduino-serial-lib.o $(LIBS)
+
 arduino-serial-server: arduino-serial-lib.o
 	$(CC) $(CFLAGS) $(CFLAGS_MONGOOSE) -o arduino-serial-server$(EXE_SUFFIX) arduino-serial-server.c  arduino-serial-lib.o mongoose/mongoose.c $(LIBS)
+
+
 
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c -o $*.o
@@ -55,5 +61,6 @@ arduino-serial-server: arduino-serial-lib.o
 clean:
 	rm -f $(OBJ) arduino-serial arduino-serial.exe *.o *.a
 	rm -f $(OBJ) arduino-serial-server arduino-serial-server.exe *.o *.a
+	rm -f linux-serial
 	rm -f mongoose/mongoose.o
 

@@ -57,3 +57,25 @@ To build, just check it out, make, and run it like:
 </pre>
 
 For more details on the build process, see the Makefile.
+
+
+Linux Serial
+-----------
+
+This provides a simple wrapper and exposes an Arduino Streams like interface
+for development of code that would use an Arduino Hardware or Software Serial
+
+Usage:
+
+- specicfy to the name of the device in linix-stream.h (see default)
+- make linux-serial
+- edit parameters in socat.sh (or use defaults) then run ./socat.sh
+- use a terminal emulator to communicate (or change socat to alternative end point)
+
+Here is the default socat tunnel
+socat -d -d PTY,link=/tmp/ttysocat0 PTY,link=/tmp/ttysocat1 & disown
+
+e.g. minicom -D /tmp/ttysocat1 -b 9600
+
+
+
