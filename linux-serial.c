@@ -10,7 +10,7 @@ int main(int argc, char **argv){
 	while(1){
 		if (l.available()){
 		int j = l.read();
-		if (j >0){
+		if (j >=0){
 			printf("%c",j);
 			fflush(stdout);
 			}
