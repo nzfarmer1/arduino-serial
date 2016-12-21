@@ -11,14 +11,19 @@ ifeq "$(UNAME)" "Linux"
 	OS=linux
 endif
 
+ifeq "$(OS)" "linux"
 
+CC=g++
+CFLAGS += -DLINUX
+
+endif
 #################  Mac OS X  ##################################################
 ifeq "$(OS)" "macosx"
 
 EXE_SUFFIX=
 
 #ARCHS=    -arch x86_64
-CFLAGS+= $(ARCHS) #-DSERIALPORTDEBUG
+CFLAGS+= $(ARCHS) -DMACOSX #-DSERIALPORTDEBUG
 CFLAGS += -mmacosx-version-min=10.6
 CFLAGS_MONGOOSE=  -I./mongoose -pthread -g 
 LIBS+=	 $(ARCHS)
@@ -46,11 +51,12 @@ all: arduino-serial linux-serial
 arduino-serial: arduino-serial.o arduino-serial-lib.o
 	$(CC) $(CFLAGS) -o arduino-serial$(EXE_SUFFIX) arduino-serial.o arduino-serial-lib.o $(LIBS)
 
+arduino-serial-server: arduino-serial-lib.o
+	$(CC) $(CFLAGS) $(CFLAGS_MONGOOSE) -o arduino-serial-server$(EXE_SUFFIX) arduino-serial-server.c  arduino-serial-lib.o mongoose/mongoose.c $(LIBS)
+
 linux-serial: linux-serial.o arduino-serial-lib.o linux-serial.h linux-serial.c
 	$(CC) $(CFLAGS) -o linux-serial$(EXE_SUFFIX) linux-serial.o arduino-serial-lib.o $(LIBS)
 
-arduino-serial-server: arduino-serial-lib.o
-	$(CC) $(CFLAGS) $(CFLAGS_MONGOOSE) -o arduino-serial-server$(EXE_SUFFIX) arduino-serial-server.c  arduino-serial-lib.o mongoose/mongoose.c $(LIBS)
 
 
 

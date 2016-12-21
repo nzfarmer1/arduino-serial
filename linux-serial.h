@@ -22,7 +22,7 @@ class LinuxSerial : public  Stream {
         int begin(int baud) { fd =  serialport_init(_ttyname,  baud); return fd >0;};
         int end() { return serialport_close(fd);};
 	int available() {return pread(fd,buf,1,0); } ;
-        int read() {return serialport_read_until(fd, buf, NULL, 1,1) >=0 ? buf[0] :-1;}; 
+        int read() {return serialport_read_until(fd, buf, '\0', 1,1) >=0 ? buf[0] :-1;}; 
         size_t write(uint8_t b ){return  (serialport_writebyte(fd, b) >=0);};
 	int peek() {int l = pread(fd,buf,1,0); return l>=0? buf[0]:-1;} ;
         size_t write(const uint8_t * data, int len) {

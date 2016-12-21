@@ -24,8 +24,13 @@
 
 
 #include <inttypes.h>
-#include <String.h>
 
+#ifdef LINUX
+#include <string.h>
+#endif
+#ifdef MACOSX
+#include <String.h>
+#endif
 // compatability macros for testing
 /*
 #define   getInt()            parseInt()
