@@ -122,13 +122,13 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
 {
     char b[1];  // read expects an array, so we give it a 1-byte array
     int i=0;
-    do { 
+    do {
         int n = read(fd, b, 1);  // read a char at a time
         if( n==-1) return -1;    // couldn't read
         if( n==0 ) {
-            usleep( 1 * 1000 );  // wait 1 msec try again
+             usleep( 1 * 1000 );  // wait 1 msec try again
             timeout--;
-            if( timeout==0 ) return -2;
+           if( timeout==0 ) return -2;
             continue;
         }
 #ifdef SERIALPORTDEBUG  
@@ -139,7 +139,7 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
     } while( b[0] != until && i < buf_max && timeout>0 );
 
     buf[i] = 0;  // null terminate the string
-    return 0;
+    return i;
 }
 
 //
