@@ -36,8 +36,6 @@ class LinuxSerial : public  Stream {
             int r;
             if (c == -1) {
                 if (serialport_read_until(_fd, buf, '\0', 1,1)>0){ 
-                    printf("->%x\n",(uint8_t)buf[0]);
-                    fflush(stdout);
                     return (uint8_t)buf[0];
                 }
                 else
@@ -52,7 +50,9 @@ class LinuxSerial : public  Stream {
             //c =-1;
             //return r;
             }; 
-        size_t write(uint8_t b ){return  (serialport_writebyte(_fd, b) >=0);};
+        size_t write(uint8_t b ){
+            return  (serialport_writebyte(_fd, b) >=0);
+            };
         int peek() {
             return available() ? c : -1;
         } ;
