@@ -15,9 +15,11 @@ class LinuxSerial : public  Stream {
  private:
 	int _fd;
 	char  buf[2];
- int c;
+	int c;
+	void _exit(int i) { this->end();}
  
  public:
+	
         int begin(int baud,const char * _ttyname = "/tmp/ttysocat0") {
             c = -1;
             _fd = serialport_init(_ttyname,  baud);

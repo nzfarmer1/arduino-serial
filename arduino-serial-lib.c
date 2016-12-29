@@ -13,6 +13,8 @@
 #include <termios.h>  // POSIX terminal control definitions 
 #include <string.h>   // String function definitions 
 #include <sys/ioctl.h>
+#include <stdlib.h>
+#include <signal.h>
 
 // uncomment this to debug reads
 //#define SERIALPORTDEBUG 
@@ -21,13 +23,23 @@
 // and a baud rate (bps) and connects to that port at that speed and 8N1.
 // opens the port in fully raw mode so you can send binary data.
 // returns valid fd, or -1 on error
+
+static int fd = 0;
+
+void _sigint(int sig){
+	if (fd >0)
+		serialport_close(fd);
+	exit(0);
+	};
+
+
 int serialport_init(const char* serialport, int baud)
 {
     struct termios toptions;
-    int fd;
     
     //fd = open(serialport, O_RDWR | O_NOCTTY | O_NDELAY);
     fd = open(serialport, O_RDWR | O_NONBLOCK );
+    signal(SIGINT, _sigint);
     
     if (fd == -1)  {
         perror("serialport_init: Unable to open port ");
