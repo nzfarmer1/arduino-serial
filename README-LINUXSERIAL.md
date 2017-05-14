@@ -1,6 +1,8 @@
 Linux Serial provides a simple wrapper of the Arduino Streams library that can be used as a replacement
 for Arduino's Serial[1..3] when testing/developing code within a *NIX environment.
 
+Have updated termios settings to be raw (ignore CR)
+
 Usage:
 
 - For simulation purposes setup a tunnel using socat (see examples in socat,sh)

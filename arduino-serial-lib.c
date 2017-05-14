@@ -72,7 +72,7 @@ int serialport_init(const char* serialport, int baud)
     cfsetispeed(&toptions, brate);
     cfsetospeed(&toptions, brate);
 
-    // 8N1
+/*    // 8N1
     toptions.c_cflag &= ~PARENB;
     toptions.c_cflag &= ~CSTOPB;
     toptions.c_cflag &= ~CSIZE;
@@ -86,12 +86,25 @@ int serialport_init(const char* serialport, int baud)
     toptions.c_iflag &= ~(IXON | IXOFF | IXANY); // turn off s/w flow ctrl
 
     toptions.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG); // make raw
+    
     toptions.c_oflag &= ~OPOST; // make raw
 
+   
+   */
+    toptions.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP
+                           | INLCR | IGNCR | ICRNL | IXON);
+    toptions.c_oflag &= ~OPOST;
+    toptions.c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
+    toptions.c_cflag &= ~(CSIZE | PARENB);
+    toptions.c_cflag |= CS8;
+
+    
     // see: http://unixwiz.net/techtips/termios-vmin-vtime.html
     toptions.c_cc[VMIN]  = 0;
     toptions.c_cc[VTIME] = 0;
     //toptions.c_cc[VTIME] = 20;
+   
+                   
     
     tcsetattr(fd, TCSANOW, &toptions);
     if( tcsetattr(fd, TCSAFLUSH, &toptions) < 0) {
@@ -114,6 +127,9 @@ int serialport_writebyte( int fd, uint8_t b)
     int n = write(fd,&b,1);
     if( n!=1)
         return -1;
+#ifdef SERIALPORTDEBUG
+    printf("serialport_write: b='%c [%x]'\n",b,b); // debug
+#endif    
     return 0;
 }
 
@@ -122,6 +138,11 @@ int serialport_write(int fd, const char* str)
 {
     int len = strlen(str);
     int n = write(fd, str, len);
+#ifdef SERIALPORTDEBUG
+    for(int j=0;j<len;j++)
+        printf("serialport_write: n=%d, b='%c [%x]'\n",j,str[0],str[0]); // debug
+#endif
+    
     if( n!=len ) {
         perror("serialport_write: couldn't write whole string\n");
         return -1;
@@ -144,7 +165,7 @@ int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeou
             continue;
         }
 #ifdef SERIALPORTDEBUG  
-        printf("serialport_read_until: i=%d, n=%d b='%c'\n",i,n,b[0]); // debug
+        printf("serialport_read_until: i=%d, n=%d b='%c [%x]'\n",i,n,b[0],b[0]); // debug
 #endif
         buf[i] = b[0]; 
         i++;

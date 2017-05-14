@@ -52,21 +52,35 @@ class LinuxSerial : public  Stream {
             //c =-1;
             //return r;
             }; 
-        size_t write(uint8_t b ){
-            return  (serialport_writebyte(_fd, b) >=0);
-            };
         int peek() {
             return available() ? c : -1;
         } ;
-        size_t write(const uint8_t * data, int len) {
-		int l = 0;
-		uint8_t *p = (uint8_t*)data;
-		while(l < len){
-			if (!this->write(*(p++))) 
-				break;
-			l++;
-		}
-		return (size_t)l;
+
+        size_t write(uint8_t b ){
+#ifdef SERIALPORTDEBUG
+            printf("linux-serial write %x\n",b);
+#endif
+            return  (serialport_writebyte(_fd, b) >=0);
+            };
+
+        size_t write(const uint8_t * data, size_t len) {
+
+        	uint8_t * _data = (uint8_t*)data;
+        	size_t  written = len;
+       	 len=0;
+        	while(written){
+          		len++;
+          		uint8_t c = *(_data);
+           		while(true) {
+            			if (this->write(c))
+                			break;
+            			this->flush();
+            		} // Check for ready?
+           		written--; 
+           		if (written)
+                		(_data++);
+        	}
+		return (size_t)len;
 	 };
         void flush() {serialport_flush(_fd);};
 };

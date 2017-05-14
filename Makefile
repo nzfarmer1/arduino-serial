@@ -23,8 +23,8 @@ ifeq "$(OS)" "macosx"
 EXE_SUFFIX=
 
 #ARCHS=    -march=AMD64
-CFLAGS+= $(ARCHS) -DMACOSX #  -DSERIALPORTDEBUG
-CFLAGS += -mmacosx-version-min=10.6
+CFLAGS+= $(ARCHS) -DMACOSX 
+CFLAGS += -mmacosx-version-min=10.6 # -DSERIALPORTDEBUG
 CFLAGS_MONGOOSE=  -I./mongoose -pthread -g 
 LIBS+=	 $(ARCHS)
 CC=g++
@@ -67,4 +67,5 @@ clean:
 	rm -f $(OBJ) arduino-serial-server arduino-serial-server.exe *.o *.a
 	rm -f linux-serial test
 	rm -f mongoose/mongoose.o
+	
 
